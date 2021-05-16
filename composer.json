@@ -2,7 +2,7 @@
     "name": "hendricks/litebase",
     "description": "Database Manager and query builder inpired by eloquent for Horizom Framework",
     "type": "library",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "require": {
         "php": "^7.3"
     },

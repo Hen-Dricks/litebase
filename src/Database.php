@@ -16,6 +16,8 @@ class Database extends StaticQuery
 
     private $queryResult;
 
+    private $format = null;
+
     //private $params = [];
 
     private $_sqlData;
@@ -85,7 +87,7 @@ class Database extends StaticQuery
      * @param string $fields
      * @return Database
      */
-    public function select($fields = '*')
+    public function select($fields = '*'): self
     {
         $this->_fields = $fields;
         $this->_sqlType = 'select';
@@ -99,7 +101,7 @@ class Database extends StaticQuery
      * @param array $fields
      * @return Database
      */
-    public function insert(array $fields)
+    public function insert(array $fields): self
     {
         $this->_sqlData = $fields;
         $this->_sqlType = 'insert';
@@ -113,7 +115,7 @@ class Database extends StaticQuery
      * @param array $fields
      * @return Database
      */
-    public function update(array $fields)
+    public function update(array $fields): self
     {
         foreach ($fields as $column => $value) {
             if ($value === null) {
@@ -135,7 +137,7 @@ class Database extends StaticQuery
      *
      * @return Database
      */
-    public function delete()
+    public function delete(): self
     {
         $this->_sqlType = 'delete';
         return $this;
@@ -147,7 +149,7 @@ class Database extends StaticQuery
      * @param string $fields
      * @return Database
      */
-    public function count($fields = '*')
+    public function count($fields = '*'): self
     {
         $this->_fields = $fields;
         $this->_sqlType = 'count';
@@ -161,7 +163,7 @@ class Database extends StaticQuery
      * @param array $where
      * @return Database
      */
-    public function where($where = null)
+    public function where($where = null): self
     {
         if (!is_null($where)) {
             $this->_where = $where;
@@ -176,7 +178,7 @@ class Database extends StaticQuery
      * @param string $order
      * @return Database
      */
-    public function orderBy($order = null)
+    public function orderBy($order = null): self
     {
         if (!is_null($order)) {
             $this->_order = $order;
@@ -191,7 +193,7 @@ class Database extends StaticQuery
      * @param string $limit
      * @return Database
      */
-    public function limit($limit = null)
+    public function limit($limit = null): self
     {
         if (!is_null($limit)) {
             $this->_limit = $limit;
@@ -204,7 +206,7 @@ class Database extends StaticQuery
      * fetch
      * @return Database
      */
-    public function fetch()
+    public function fetch(): self
     {
         $this->_fetch = true;
         return $this;
@@ -214,7 +216,7 @@ class Database extends StaticQuery
      * fetch
      * @return Database
      */
-    public function fetchAll()
+    public function fetchAll(): self
     {
         $this->_fetchAll = true;
         return $this;
@@ -316,7 +318,15 @@ class Database extends StaticQuery
             }
 
             $req->closeCursor();
-            $this->result = $data;
+
+            if (!is_null($this->format)) {
+                if ($this->format == 'json') {
+                    $this->result = json_encode($data, JSON_PRETTY_PRINT);
+                }
+            } else {
+                $this->result = $data;
+            }
+
             return $this->result;
         } catch (\Throwable $th) {
             throw $th;
@@ -331,5 +341,17 @@ class Database extends StaticQuery
     public function getResult()
     {
         return $this->result;
+    }
+
+
+    /**
+     * toJson
+     * retourne le resultat en json
+     * @return self
+     */
+    public function toJson(): self
+    {
+        $this->format = 'json';
+        return $this;
     }
 }

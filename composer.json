@@ -1,0 +1,14 @@
+{
+    "name": "hendricks/litebase",
+    "description": "Database Manager and query builder inpired by eloquent for Horizom Framework",
+    "type": "library",
+    "version": "1.0.0",
+    "require": {
+        "php": "^7.3"
+    },
+    "license": "MIT",
+    "authors": [{
+        "name": "Hen Drick’s",
+        "email": "62672799+Hen-Dricks@users.noreply.github.com"
+    }]
+}

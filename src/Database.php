@@ -2,6 +2,7 @@
 
 namespace Hendricks\Litebase;
 
+
 use PDO;
 use Exception;
 
@@ -227,7 +228,7 @@ class Database extends StaticQuery
      * Permet de construire la requête selon le type
      * @return Database
      */
-    public function buildQuery()
+    private function buildQuery()
     {
         if ($this->_sqlType == 'count') {
             $sql = "SELECT " . $this->_fields . " FROM " . $this->table;
@@ -286,7 +287,6 @@ class Database extends StaticQuery
         }
 
         $this->query = $sql;
-        // return $sql;
     }
 
     /**
@@ -322,6 +322,8 @@ class Database extends StaticQuery
             if (!is_null($this->format)) {
                 if ($this->format == 'json') {
                     $this->result = json_encode($data, JSON_PRETTY_PRINT);
+                } elseif ($this->format == 'object') {
+                    $this->result = $this->arrayToObject($data);
                 }
             } else {
                 $this->result = $data;
@@ -343,7 +345,6 @@ class Database extends StaticQuery
         return $this->result;
     }
 
-
     /**
      * toJson
      * retourne le resultat en json
@@ -353,5 +354,40 @@ class Database extends StaticQuery
     {
         $this->format = 'json';
         return $this;
+    }
+
+    /**
+     * toObject
+     * retourne le resultat en objet
+     * @return self
+     */
+    public function toObject(): self
+    {
+        $this->format = 'object';
+        return $this;
+    }
+
+
+    /**
+     * arrayToObject
+     * 
+     * @param array $array
+     * @return Object
+     */
+    private function arrayToObject(array $array)
+    {
+        if (is_array($array) && !empty($array)) {
+            $d = new \stdClass();
+
+            foreach ($array as $k => $v) {
+                if (!empty($v) && is_array($v)) {
+                    $v = $this->arrayToObject($v);
+                }
+
+                $d->$k = $v;
+            }
+
+            return $d;
+        }
     }
 }

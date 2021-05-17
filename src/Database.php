@@ -2,7 +2,6 @@
 
 namespace Hendricks\Litebase;
 
-
 use PDO;
 use Exception;
 
@@ -90,6 +89,10 @@ class Database extends StaticQuery
      */
     public function select($fields = '*'): self
     {
+        if (is_array($fields)) {
+            $fields = implode(', ', $fields);
+        }
+
         $this->_fields = $fields;
         $this->_sqlType = 'select';
 
@@ -167,6 +170,10 @@ class Database extends StaticQuery
     public function where($where = null): self
     {
         if (!is_null($where)) {
+            if (is_array($where)) {
+                $where = implode(" AND ", $where);
+            }
+
             $this->_where = $where;
         }
 
@@ -287,6 +294,7 @@ class Database extends StaticQuery
         }
 
         $this->query = $sql;
+        // return $sql;
     }
 
     /**
